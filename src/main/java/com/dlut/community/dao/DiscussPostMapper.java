@@ -1,0 +1,26 @@
+package com.dlut.community.dao;
+
+import com.dlut.community.pojo.DiscussPost;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+@Mapper
+public interface DiscussPostMapper {
+    /*
+    * 动态查询。
+    * userId = 0时，查询所有用户帖子
+    * userId ！= 0时，查询当前用户帖子
+    * 分页
+    * offset:每页起始行行号
+    * limit:每页最多显示数据
+    * */
+    List<DiscussPost> selectDiscussPost(int userId, int offset, int limit);
+
+    /*
+    * 查询帖子数量
+    * 注：当参数为动态查询参数且仅有一个参数时，必须用@Param起别名，否则报错
+    * */
+    int selectDiscussPostRows(@Param("userId") int userId);
+}

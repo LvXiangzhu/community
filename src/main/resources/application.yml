@@ -1,0 +1,34 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /community
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    url: jdbc:mysql:///community?characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+    password: 1234
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 15 # 连接池最大连接数
+      minimum-idle: 5 # 最小空闲连接
+      idle-timeout: 30000 # 超时时间：ms
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml # xml文件的位置
+  type-aliases-package: com.dlut.community.pojo # xml里引用实体类时不用写包名
+  configuration:
+    use-generated-keys: true # 启用自动生成主键（id）
+    map-underscore-to-camel-case: true # 自动匹配数据库下划线命名和实体类驼峰命名
+
+
+logging:
+  level:
+    com:
+      dlut:
+        community: debug # 将该路径包的所有文件日志级别设置为debug，方便查看xml报错
+
+  file:
+    path: "d:/community.log"
+

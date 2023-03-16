@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlut.community.dao.DiscussPostMapper">
+
+    <sql id="selectField">
+        id, user_id, title, content, type, status, create_time, comment_count, score
+    </sql>
+    <!--虽然返回值是List但resultType写DiscussPost就行了，因为List是Java自己的方法能自动解析出来-->
+    <select id="selectDiscussPost" resultType="DiscussPost">
+        select <include refid="selectField"></include>
+        from discuss_post
+        where status != 2 -- 状态为2是拉黑，不应该显示
+        <if test="userId != 0"> -- test里的userId指的是传过来的参数名
+            and user_id = #{userId}
+        </if>
+        order by type desc, create_time desc -- 按类型和时间倒叙排序，使最新置顶帖子在前
+        limit #{offset}, #{limit}; -- 分页显示
+    </select>
+
+    <select id="selectDiscussPostRows" resultType="java.lang.Integer">
+        select count(id)
+        from discuss_post
+        where status != 2 -- 状态为2是拉黑，不应该显示
+        <if test="userId != 0"> -- test里的userId指的是传过来的参数名
+            and user_id = #{userId};
+        </if>
+    </select>
+</mapper>
