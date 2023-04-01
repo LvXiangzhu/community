@@ -1,8 +1,10 @@
 package com.dlut.community;
 
 import com.dlut.community.dao.DiscussPostMapper;
+import com.dlut.community.dao.LoginTicketMapper;
 import com.dlut.community.dao.UserMapper;
 import com.dlut.community.pojo.DiscussPost;
+import com.dlut.community.pojo.LoginTicket;
 import com.dlut.community.pojo.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ public class MappperTest {
     UserMapper userMapper;
     @Autowired
     DiscussPostMapper discussPostMapper;
+    @Autowired
+    LoginTicketMapper loginTicketMapper;
 
     @Test
     public void testSelectUser() {
@@ -61,5 +65,27 @@ public class MappperTest {
         for (DiscussPost discussPost : discussPosts) {
             System.out.println(discussPost);
         }
+    }
+
+    @Test
+    public void testInsertLoginTicket() {
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setId(1);
+        loginTicket.setUserId(101);
+        loginTicket.setTicket("123");
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + 1000 * 60 * 10)); //System.currentTimeMillis()单位：毫秒
+        int row = loginTicketMapper.insertLoginTicket(loginTicket);
+        System.out.println(row);
+    }
+
+    @Test
+    public void testSelectLoginTicket() {
+        LoginTicket loginTicket = loginTicketMapper.selectByTicket("123");
+        System.out.println(loginTicket);
+    }
+
+    @Test
+    public void testUpdateLoginTicket() {
+        loginTicketMapper.updateStatus("123", 1);
     }
 }

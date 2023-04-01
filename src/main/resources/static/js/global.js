@@ -1,3 +1,6 @@
+//在这里声明路径全局变量
+var context_path = "/community";
+
 window.alert = function(message) {
 	if(!$(".alert-box").length) {
 		$("body").append(

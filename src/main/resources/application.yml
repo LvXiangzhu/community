@@ -14,6 +14,18 @@ spring:
       maximum-pool-size: 15 # 连接池最大连接数
       minimum-idle: 5 # 最小空闲连接
       idle-timeout: 30000 # 超时时间：ms
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: 15102489402@163.com
+    password: lvxiangzhu240041
+    protocol: smtps
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true # 启用ssl安全连接
+            required: false
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml # xml文件的位置
@@ -31,4 +43,10 @@ logging:
 
   file:
     path: "d:/community.log"
+
+community:
+  path:
+    domain: http://localhost:8080
+    upload: D:/work/data/upload # 保存用户头像的位置
+
 
