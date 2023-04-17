@@ -4,6 +4,7 @@ import com.dlut.community.pojo.LoginTicket;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
+@Deprecated
 public interface LoginTicketMapper {
     //插入一条数据
     @Insert({

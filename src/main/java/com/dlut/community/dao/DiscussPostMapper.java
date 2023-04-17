@@ -20,7 +20,23 @@ public interface DiscussPostMapper {
 
     /*
     * 查询帖子数量
+    * 参数：用户Id。Id=0时查询全部
     * 注：当参数为动态查询参数且仅有一个参数时，必须用@Param起别名，否则报错
     * */
     int selectDiscussPostRows(@Param("userId") int userId);
+
+    /*
+    * 增加帖子
+    * */
+    int insertDiscussPost(DiscussPost discussPost);
+
+    /*
+    * 查询帖子
+    * */
+    DiscussPost selectDiscussPostById(int id);
+
+    /*
+    * 更新评论数量（comment_count）
+    * */
+    int updateCommentCount(int id, int commentCount);
 }

@@ -54,7 +54,7 @@ public class Page {
     * @return
     * */
     public int getOffset() {
-        //count * limit - limit
+        //current * limit - limit
         return (current - 1) * limit;
     }
     /*

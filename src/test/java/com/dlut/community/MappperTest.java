@@ -1,11 +1,7 @@
 package com.dlut.community;
 
-import com.dlut.community.dao.DiscussPostMapper;
-import com.dlut.community.dao.LoginTicketMapper;
-import com.dlut.community.dao.UserMapper;
-import com.dlut.community.pojo.DiscussPost;
-import com.dlut.community.pojo.LoginTicket;
-import com.dlut.community.pojo.User;
+import com.dlut.community.dao.*;
+import com.dlut.community.pojo.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +19,10 @@ public class MappperTest {
     DiscussPostMapper discussPostMapper;
     @Autowired
     LoginTicketMapper loginTicketMapper;
+    @Autowired
+    CommentMapper commentMapper;
+    @Autowired
+    MessageMapper messageMapper;
 
     @Test
     public void testSelectUser() {
@@ -87,5 +87,55 @@ public class MappperTest {
     @Test
     public void testUpdateLoginTicket() {
         loginTicketMapper.updateStatus("123", 1);
+    }
+
+    @Test
+    public void testUpdatePassword() {
+        userMapper.updatePassword(150, "222");
+    }
+
+    @Test
+    public void testInsertDiscussPost() {
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setUserId(150);
+        discussPost.setTitle("测试数据");
+        discussPost.setContent("大家好");
+        discussPost.setStatus(0);
+        discussPost.setType(0);
+        discussPost.setCreateTime(new Date());
+        discussPost.setCommentCount(0);
+        int i = discussPostMapper.insertDiscussPost(discussPost);
+        System.out.println(i);
+    }
+
+    @Test
+    public void testInsertComment() {
+        Comment comment = new Comment();
+        comment.setContent("text");
+        comment.setCreateTime(new Date());
+        comment.setUserId(151);
+        comment.setEntityType(0);
+        int i = commentMapper.insertComment(comment);
+        System.out.println(i);
+    }
+
+    @Test
+    public void testMessage() {
+        List<Message> list = messageMapper.selectConversations(111, 0, 20);
+        for (Message message : list) {
+            System.out.println(message);
+        }
+        int count = messageMapper.selectConversationCount(111);
+        System.out.println(count);
+
+        List<Message> list2 = messageMapper.selectLetters("111_112", 0, 5);
+        for (Message message : list2) {
+            System.out.println(message);
+        }
+        int c2 = messageMapper.selectLetterCount("111_112");
+        System.out.println(c2);
+
+        int c3 = messageMapper.selectLetterUnreadCount(111, "111_131");
+        System.out.println(c3);
     }
 }
