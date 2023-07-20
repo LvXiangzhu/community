@@ -61,7 +61,7 @@ public class MappperTest {
     public void testSelectPosts() {
         int rows = discussPostMapper.selectDiscussPostRows(111);
         System.out.println(rows);
-        List<DiscussPost> discussPosts = discussPostMapper.selectDiscussPost(111, 0, 10);
+        List<DiscussPost> discussPosts = discussPostMapper.selectDiscussPost(111, 0, 10, 0);
         for (DiscussPost discussPost : discussPosts) {
             System.out.println(discussPost);
         }
@@ -138,4 +138,6 @@ public class MappperTest {
         int c3 = messageMapper.selectLetterUnreadCount(111, "111_131");
         System.out.println(c3);
     }
+
+
 }

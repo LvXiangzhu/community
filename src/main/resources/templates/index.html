@@ -1,9 +1,11 @@
 <!doctype html>
-<html lang="en"
-> <!--TODO：指定模板引擎-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org"> <!--TODO：指定模板引擎-->
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!--访问该页面时,在此处生成CSRF令牌.-->
+<!--		<meta name="_csrf" th:content="${_csrf.token}">-->
+<!--		<meta name="_csrf_header" th:content="${_csrf.headerName}">-->
 	<link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 	<link rel="stylesheet" th:href="@{/css/global.css}" /> <!--TODO: 这里引用的是相对路径，需要用th：表示用thymeleaf模板找这个路径，用@{}会固定在static下找这个资源-->
@@ -76,10 +78,11 @@
 					<!-- 筛选条件 -->
 					<ul class="nav nav-tabs mb-3">
 						<li class="nav-item">
-							<a class="nav-link active" href="#">最新</a>
+							<!--TODO 动态拼接判断哪一个按钮处于点亮状态，加active-->
+							<a th:class="|nav-link ${orderMode==0 ? 'active' : ''}|" th:href="@{/index(orderMode=0)}">最新</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#">最热</a>
+							<a th:class="|nav-link ${orderMode==1 ? 'active' : ''}|" th:href="@{/index(orderMode=1)}">最热</a>
 						</li>
 					</ul>
 					<button type="button" class="btn btn-primary btn-sm position-absolute rt-0" data-toggle="modal" data-target="#publishModal" th:if="${loginUser!=null}">我要发布</button>

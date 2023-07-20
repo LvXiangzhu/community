@@ -41,6 +41,27 @@ spring:
       group-id: test-consumer-group # 这个属性在kafka的config的consumer.properties文件里有
       enable-auto-commit: true # 是否自动提交消费者读取消息的偏移量
       auto-commit-interval: 3000 # 自动提交的频率，这里设置3000ms
+  # 配置线程池
+  task:
+    execution:
+      pool:
+        core-size: 5 # 核心线程
+        max-size: 15 # 最大线程
+        queue-capacity: 100 # 队列容量
+    scheduling:
+      pool:
+        size: 5 # 定时线程数
+  quartz:
+    job-store-type: jdbc # 设置quartz存在数据库里
+    scheduler-name: communityScheduler
+#    properties:
+#      org:
+#        quartz:
+#          scheduler:
+#            instanceId: AUTO # id自动生成
+#          jobStore:
+#            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+#            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
 
 #  elasticsearch:
 #    uris: http://localhost:9200
@@ -68,3 +89,5 @@ community:
   path:
     domain: http://localhost:8080
     upload: D:/work/data/upload # 保存用户头像的位置
+
+

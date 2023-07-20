@@ -1,7 +1,9 @@
 package com.dlut.community.Event;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.dlut.community.Service.DiscussPostService;
 import com.dlut.community.Service.MessageService;
+import com.dlut.community.pojo.DiscussPost;
 import com.dlut.community.pojo.Event;
 import com.dlut.community.pojo.Message;
 import com.dlut.community.util.CommunityConstant;
@@ -24,6 +26,9 @@ public class EventConsumer implements CommunityConstant {
 
     @Autowired
     MessageService messageService;
+
+    @Autowired
+    DiscussPostService discussPostService;
 
     @KafkaListener(topics = {TOPIC_COMMENT, TOPIC_LIKE, TOPIC_FOLLOW})
     public void handleCommentMessage(ConsumerRecord record) {
@@ -59,5 +64,40 @@ public class EventConsumer implements CommunityConstant {
         //转换成Json格式保存起来
         message.setContent(JSONObject.toJSONString(content));
         messageService.addMessage(message);
+    }
+
+    // 消费发帖事件
+    @KafkaListener(topics = {TOPIC_PUBLISH})
+    public void handlePublishMessage(ConsumerRecord record) {
+        if (record == null || record.value() == null) {
+            logger.error("消息的内容为空!");
+            return;
+        }
+
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        if (event == null) {
+            logger.error("消息格式错误!");
+            return;
+        }
+
+        DiscussPost post = discussPostService.findDiscussPostById(event.getEntityId());
+//        elasticsearchService.saveDiscussPost(post);
+    }
+
+    // 消费删帖事件
+    @KafkaListener(topics = {TOPIC_DELETE})
+    public void handleDeleteMessage(ConsumerRecord record) {
+        if (record == null || record.value() == null) {
+            logger.error("消息的内容为空!");
+            return;
+        }
+
+        Event event = JSONObject.parseObject(record.value().toString(), Event.class);
+        if (event == null) {
+            logger.error("消息格式错误!");
+            return;
+        }
+
+//        elasticsearchService.deleteDiscussPost(event.getEntityId());
     }
 }

@@ -1,4 +1,8 @@
-
+$(function(){
+    $("#topBtn").click(setTop);
+    $("#wonderfulBtn").click(setWonderful);
+    $("#deleteBtn").click(setDelete);
+});
 
 function like(btn, entityType, entityId, entityUserId, postId) {
     $.post(
@@ -20,4 +24,56 @@ function like(btn, entityType, entityId, entityUserId, postId) {
 
         }
     )
+}
+
+// 置顶
+function setTop() {
+    $.post(
+        context_path + "/discuss/top",
+        {"id":$("#postId").val()},
+        function(data) {
+            data = $.parseJSON(data);
+            if(data.code == 0) {
+                //置顶后，设置置顶按钮不可用
+                $("#topBtn").attr("disabled", "disabled");
+            } else {
+                alert(data.msg);
+            }
+        }
+    );
+}
+
+// 加精
+function setWonderful() {
+    vv = $("#postId").val()
+    $.post(
+        context_path + "/discuss/wonderful",
+        {"id":$("#postId").val()},
+        function(data) {
+            data = JSON.parse(data);
+            if(data.code == 0) {
+                //加精后，设置加精按钮不可用
+                $("#wonderfulBtn").attr("disabled", "disabled");
+            } else {
+                alert(data.msg);
+            }
+        }
+    );
+}
+
+// 删除
+function setDelete() {
+    $.post(
+        context_path + "/discuss/delete",
+        {"id":$("#postId").val()},
+        function(data) {
+            data = $.parseJSON(data);
+            if(data.code == 0) {
+                //删除后，重定向到index页面
+                location.href = context_path + "/index";
+            } else {
+                alert(data.msg);
+            }
+        }
+    );
 }

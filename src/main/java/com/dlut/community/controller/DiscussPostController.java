@@ -1,17 +1,17 @@
 package com.dlut.community.controller;
 
+import com.dlut.community.Event.EventProducer;
 import com.dlut.community.Service.CommentService;
 import com.dlut.community.Service.DiscussPostService;
 import com.dlut.community.Service.LikeService;
 import com.dlut.community.Service.UserService;
-import com.dlut.community.pojo.Comment;
-import com.dlut.community.pojo.DiscussPost;
-import com.dlut.community.pojo.Page;
-import com.dlut.community.pojo.User;
+import com.dlut.community.pojo.*;
 import com.dlut.community.util.CommunityConstant;
 import com.dlut.community.util.CommunityUtil;
 import com.dlut.community.util.HostHolder;
+import com.dlut.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +39,12 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     LikeService likeService;
 
+    @Autowired
+    EventProducer eventProducer;
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
     /*
     * 方法功能：发布帖子
     * 参数：标题，内容
@@ -61,6 +67,11 @@ public class DiscussPostController implements CommunityConstant {
         post.setCommentCount(0);
         post.setScore(0);
         discussPostService.addDiscussPost(post);
+
+        // 计算帖子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey, post.getId());
+
         //报错的情况将来同一处理
         return CommunityUtil.getJSONString(0, "发布成功！");
     }
@@ -151,6 +162,63 @@ public class DiscussPostController implements CommunityConstant {
         }
         model.addAttribute("comments", commentVoList);
         return "site/discuss-detail";
+    }
+
+    /*
+    * 置顶
+    * */
+    @RequestMapping(path = "/top", method = RequestMethod.POST)
+    @ResponseBody
+    public String setTop(int id) {
+        discussPostService.updateType(id, 1);
+
+        // 有ES时，需触发发帖事件
+//        Event event = new Event()
+//                .setTopic(TOPIC_PUBLISH)
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(ENTITY_TYPE_POST)
+//                .setEntityId(id); //如果不设置自增主键的话这里就会有问题
+//        eventProducer.fireEvent(event);
+
+        return CommunityUtil.getJSONString(0);
+    }
+
+    // 加精
+    @RequestMapping(path = "/wonderful", method = RequestMethod.POST)
+    @ResponseBody
+    public String setWonderful(int id) {
+        discussPostService.updateStatus(id, 1);
+
+        // 触发发帖事件
+//        Event event = new Event()
+//                .setTopic(TOPIC_PUBLISH)
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(ENTITY_TYPE_POST)
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
+
+        // 计算帖子分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey, id);
+
+        return CommunityUtil.getJSONString(0);
+    }
+
+    // 删除
+    @RequestMapping(path = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public String setDelete(int id) {
+        discussPostService.updateStatus(id, 2);
+
+        // 触发删帖事件
+//        Event event = new Event()
+//                .setTopic(TOPIC_DELETE)
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(ENTITY_TYPE_POST)
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
+
+        return CommunityUtil.getJSONString(0);
     }
 
 }

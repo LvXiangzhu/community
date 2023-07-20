@@ -15,8 +15,9 @@ public interface DiscussPostMapper {
     * 分页
     * offset:每页起始行行号
     * limit:每页最多显示数据
+    * orderMode:排序方式，按热度还是时间
     * */
-    List<DiscussPost> selectDiscussPost(int userId, int offset, int limit);
+    List<DiscussPost> selectDiscussPost(int userId, int offset, int limit, int orderMode);
 
     /*
     * 查询帖子数量
@@ -39,4 +40,19 @@ public interface DiscussPostMapper {
     * 更新评论数量（comment_count）
     * */
     int updateCommentCount(int id, int commentCount);
+
+    /*
+    * 更改帖子类型
+    * */
+    int updateType(int id, int type);
+
+    /*
+    * 更改帖子状态
+    * */
+    int updateStatus(int id, int status);
+
+    /*
+     * 更改帖子分数
+     * */
+    int updateScore(int id, double score);
 }

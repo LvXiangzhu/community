@@ -21,7 +21,12 @@
         <if test="userId != 0"> -- test里的userId指的是传过来的参数名
             and user_id = #{userId}
         </if>
-        order by type desc, create_time desc -- 按类型和时间倒叙排序，使最新置顶帖子在前
+        <if test="orderMode==0">
+            order by type desc, create_time desc -- 按类型和时间倒叙排序，使最新置顶帖子在前
+        </if>
+        <if test="orderMode==1">
+            order by type desc, score desc, create_time desc -- 按类型和热度倒序排序
+        </if>
         limit #{offset}, #{limit}; -- 分页显示
     </select>
 
@@ -47,5 +52,15 @@
 
     <update id="updateCommentCount"> -- 普通的数据类型不用声明传过来的参数
         update discuss_post set comment_count = #{commentCount} where id = #{id};
+    </update>
+
+    <update id="updateType">
+        update discuss_post set type = #{type} where id = #{id};
+    </update>
+    <update id="updateStatus">
+        update discuss_post set status = #{status} where id = #{id};
+    </update>
+    <update id="updateScore">
+        update discuss_post set score = #{score} where id = #{id};
     </update>
 </mapper>

@@ -11,6 +11,13 @@ import jakarta.servlet.http.HttpServletResponse;
 //import javax.servlet.http.HttpServletRequest;
 //import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,6 +31,9 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
 
     @Autowired
     HostHolder hostHolder;
+
+    @Autowired
+    SecurityContextRepository securityContextRepository;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -40,6 +50,13 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
                 //在本次请求中持有user
                 //防止多线程中多个对象冲突，在多线程中用ThreadLocal隔离存储多个对象
                 hostHolder.setUser(user);
+
+                // 构建用户认证的结果,并存入SecurityContext,以便于Security进行授权.
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        user, user.getPassword(), userService.getAuthorities(user.getId()));
+                SecurityContextHolder.setContext(new SecurityContextImpl(authentication));
+                //认证信息持久化
+                securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
             }
 
         }
@@ -63,5 +80,7 @@ public class LoginTicketInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         hostHolder.clear();
+        //
+//        SecurityContextHolder.clearContext();
     }
 }
